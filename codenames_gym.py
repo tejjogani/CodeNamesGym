@@ -103,6 +103,8 @@ class CodenameEnv(gym.Env):
     for x in self.words:
       x.chosen = False
 
+    #needs to return final observation
+
   """
   TODO: decide with MARL team
   """
@@ -118,7 +120,6 @@ class CodenameEnv(gym.Env):
   def render(self, close=False, play=False):
     # Render the environment to the screen
     print_board()
-    if play
 
   def other(self, color):
     assert color in ['red', 'blue']
