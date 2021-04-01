@@ -41,6 +41,12 @@ class Card:
     else:
       return str(self.word)
 
+  def __repr__(self):
+    if self.chosen:
+      return str(self.team)
+    else:
+      return str(self.word)
+
 
 """
 to run: python3 -i codenames_gym.py, instantiate CodenameEnv()
@@ -111,7 +117,7 @@ class CodenameEnv(gym.Env):
   def _get_obs(self):
     return 'awkward pause'
     
-  def print_board():
+  def print_board(self):
     for i in range(4):
       for j in range(4):
         print(str(self.words[i*4 + j]) +   " " * (20 - len(str((self.words[i*4 + j]))))  , end=" | ")
@@ -119,7 +125,7 @@ class CodenameEnv(gym.Env):
 
   def render(self, close=False, play=False):
     # Render the environment to the screen
-    print_board()
+    self.print_board()
 
   def other(self, color):
     assert color in ['red', 'blue']
@@ -138,3 +144,30 @@ class CodenameEnv(gym.Env):
           x = np.random.randint(16)
         self.rbs[color].append(x)
         self.words[x].team = color
+
+
+def example():
+  print("Codenames Env can be created by running g = CodenameEnv()")
+  g = CodenameEnv()
+  print("Creating this sets everything up")
+  print("g.words")
+  print(g.words)
+  print("team assignments")
+  print(g.rbs)
+  print("g.render()")
+  print(g.render())
+  print("Set cards to chosen with g.words[i].chosen = True")
+  print("g.words[3].chosen = True")
+  print("g.words[4].chosen = True")
+  print("g.words[8].chosen = True")
+  g.words[3].chosen = True
+  g.words[4].chosen = True
+  g.words[8].chosen = True
+  g.render()
+
+
+
+
+
+if __name__ == "__main__":
+  example()
