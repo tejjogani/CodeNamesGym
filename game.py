@@ -20,10 +20,12 @@ def game():
     print("================================")
     print()
     print(environment.max_guesses)
+    field_reward = 0
     for i in range(environment.max_guesses):
         guess = operative.get_action(environment)
         print(guess)
         e,f,g,h= environment.step((guess, i), operative.team)
+        field_reward += f
         print("FIELD MOVE")
         print()
         environment.render()
@@ -33,6 +35,7 @@ def game():
 
         if g:
             print("DONE")
+            print("AGENT REWARD: ", field_reward)
             break
 
 if __name__ == "__main__":
