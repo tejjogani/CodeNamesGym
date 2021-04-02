@@ -1,4 +1,5 @@
 import gym
+import random
 from gym import spaces
 import numpy as np
 
@@ -72,6 +73,11 @@ class CodenameEnv(gym.Env):
     self.rbs = {'red': [], 'blue': []}
     self.fill_team('red') 
     self.fill_team('blue')
+    self.death = [random.choice(self.rbs['red']), random.choice(self.rbs['blue'])]
+    self.rbs['red'].remove(self.death[0])
+    self.rbs['blue'].remove(self.death[1])
+    for i in range(2):
+      self.words[self.death[i]].team = "DEATH CARD"
     self.rbs['red'].sort()
     self.rbs['blue'].sort()
     self.correct_words = []
@@ -79,12 +85,17 @@ class CodenameEnv(gym.Env):
     self.guessed_correct = False
 
   
-  def step(self, action, spyagent=0):
+  def step(self, action, team, spyagent=False):
     # Execute one time step within the environment
     done = False
     if not spyagent: #0 is listener
-      assert len(action) == 2 and len(action[0].split('')) == 1
-      if action in self.correct_words:
+      assert len(action) == 2 and len(action[0].word.split(' ')) == 1
+      if self.words.index(action[0]) in self.death:
+        done = True
+        reward = -1 
+        self.words[self.words.index(action[0])].chosen = True
+        return self._get_obs(), reward, done, {}
+      if self.words.index(action[0]) in self.rbs[team]:
         reward = 1 #recognize that sometimes reward is given for random choices (50/50)
         if action[1] == self.max_guesses:
           done = True
@@ -93,11 +104,11 @@ class CodenameEnv(gym.Env):
         reward = -1
         done = True
         self.guessed_correct = False
-      self.words[action].chosen = True
+      self.words[self.words.index(action[0])].chosen = True
     else:
-      assert len(action) == 3
+      assert len(action) == 3 or len(action) == 2
       #(keyword, number of words, [indices of words described])
-      self.correct_words = action[2]
+      #self.correct_words = action[2]
       self.max_guesses = action[1]
       reward = 1 if self.guessed_correct else -1
       
@@ -145,6 +156,13 @@ class CodenameEnv(gym.Env):
         self.rbs[color].append(x)
         self.words[x].team = color
 
+
+  def get_legal_moves(self, team):
+    #The spy agent chooses anything so it's unneeded
+
+    #Field Operative
+
+    return self.words
 
 def example():
   print("Codenames Env can be created by running g = CodenameEnv()")
