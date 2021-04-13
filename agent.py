@@ -1,5 +1,6 @@
 import random
 import urllib.request
+import ssl
 from codenames_gym import CodenameEnv as cenv 
 
 
@@ -19,9 +20,10 @@ class RandomSpyAgent(CodenamesAgent):
         self.team = team
 
     def make_words_list(self):
+        context = ssl._create_unverified_context()
         word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
         req = urllib.request.Request(word_site)
-        response = urllib.request.urlopen(req)
+        response = urllib.request.urlopen(req, context=context)
         txt = response.read()
         WORDS = txt.splitlines()
         return WORDS
