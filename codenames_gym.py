@@ -1,6 +1,7 @@
 import gym
 import random
 from gym import spaces
+import gensim.downloader as api
 import numpy as np
 
 def random_team():
@@ -67,6 +68,7 @@ class CodenameEnv(gym.Env):
                     (HEIGHT, WIDTH, N_CHANNELS), dtype=np.uint8)
     '''
     self.dictionary = bagOfWords + weebWords
+    self.dictionary = list(api.load('text8'))
   
     self.team = random_team()
     self.words = list(map(lambda x: Card(self.dictionary[x]) ,gen_random_nums(16))) #temporary
@@ -83,6 +85,7 @@ class CodenameEnv(gym.Env):
     self.correct_words = []
     self.max_guesses = 0
     self.guessed_correct = False
+    self.hint = ""
 
   
   def step(self, action, team, spyagent=False):
@@ -109,6 +112,7 @@ class CodenameEnv(gym.Env):
       assert len(action) == 3 or len(action) == 2
       #(keyword, number of words, [indices of words described])
       #self.correct_words = action[2]
+      self.hint = action[0]
       self.max_guesses = action[1]
       reward = 1 if self.guessed_correct else -1
       

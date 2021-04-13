@@ -1,11 +1,12 @@
 from codenames_gym import CodenameEnv
-from agent import RandomSpyAgent, RandomFieldAgent
+from agent import RandomSpyAgent, RandomFieldAgent, WordEmbeddingsFieldAgent
 
 
 def game():
     environment = CodenameEnv()
     spy = RandomSpyAgent('blue')
-    operative = RandomFieldAgent('blue')
+    #operative = RandomFieldAgent('blue')
+    operative = WordEmbeddingsFieldAgent('blue')
     print("INITIAL BOARD")
     environment.render()
     print("================================")
@@ -21,6 +22,7 @@ def game():
     print()
     print(environment.max_guesses)
     field_reward = 0
+    '''
     for i in range(environment.max_guesses):
         guess = operative.get_action(environment)
         print(guess)
@@ -33,6 +35,21 @@ def game():
         print("================================")
         print()
 
+        if g:
+            print("DONE")
+            print("AGENT REWARD: ", field_reward)
+            break
+    '''
+    for i, action in enumerate(list(operative.get_action(environment))):
+        print(action)
+        e,f,g,h= environment.step((action, i), operative.team)
+        field_reward += f
+        print("FIELD MOVE")
+        print()
+        environment.render()
+        
+        print("================================")
+        print()
         if g:
             print("DONE")
             print("AGENT REWARD: ", field_reward)
