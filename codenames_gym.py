@@ -1,6 +1,8 @@
 import gym
 import random
 from gym import spaces
+from gensim.models.word2vec import Word2Vec
+
 import gensim.downloader as api
 import numpy as np
 
@@ -67,8 +69,9 @@ class CodenameEnv(gym.Env):
     self.observation_space = spaces.Box(low=0, high=255, shape=
                     (HEIGHT, WIDTH, N_CHANNELS), dtype=np.uint8)
     '''
-    self.dictionary = bagOfWords + weebWords
-    self.dictionary = list(api.load('text8'))
+    #self.dictionary = bagOfWords + weebWords
+    model = Word2Vec.load("huihan.model")
+    self.dictionary = list(model.wv.vocab.keys())
   
     self.team = random_team()
     self.words = list(map(lambda x: Card(self.dictionary[x]) ,gen_random_nums(16))) #temporary
@@ -92,6 +95,7 @@ class CodenameEnv(gym.Env):
     # Execute one time step within the environment
     done = False
     if not spyagent: #0 is listener
+      print(action)
       assert len(action) == 2 and len(action[0].word.split(' ')) == 1
       if self.words.index(action[0]) in self.death:
         done = True
@@ -133,6 +137,7 @@ class CodenameEnv(gym.Env):
     return 'awkward pause'
     
   def print_board(self):
+    #print("hei")
     for i in range(4):
       for j in range(4):
         print(str(self.words[i*4 + j]) +   " " * (20 - len(str((self.words[i*4 + j]))))  , end=" | ")

@@ -1,10 +1,11 @@
 from codenames_gym import CodenameEnv
-from agent import RandomSpyAgent, RandomFieldAgent, WordEmbeddingsFieldAgent
+from agent import *
 
 
 def game():
     environment = CodenameEnv()
-    spy = RandomSpyAgent('blue')
+    #spy = RandomSpyAgent('blue')
+    spy = SamyakSpyAgent('blue')
     #operative = RandomFieldAgent('blue')
     operative = WordEmbeddingsFieldAgent('blue')
     print("INITIAL BOARD")
@@ -12,7 +13,9 @@ def game():
     print("================================")
     # 1 iteration
     spy_move = spy.get_action(environment)
+    print("before spy")
     print(spy_move)
+    print("after spy")
     a,b,c,d = environment.step(spy_move, spy.team, spyagent=True)
     print("SPY MOVE")
     print()
