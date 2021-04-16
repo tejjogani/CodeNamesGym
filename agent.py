@@ -7,7 +7,7 @@ import gensim.downloader as api
 from codenames_gym import CodenameEnv as cenv 
 from codenames_gym import Card
 from sklearn.metrics.pairwise import cosine_similarity
-
+from scipy import spatial
 
 def softmax(x):
     return np.exp(x - np.max(x)) / np.exp(x - np.max(x)).sum()
@@ -68,13 +68,16 @@ class WordEmbeddingsFieldAgent(CodenamesAgent):
         model = Word2Vec.load("huihan.model")
         word_vec = model.wv[env.hint]
 
-        lst = [cosine_similarity(x.word, env.hint) for x in env.words]
-        print(lst)
-
+        #lst = [cosine_similarity(model.wv[x.word].reshape(-1,1), word_vec.reshape(-1,1)) for x in env.words]
+        lst = env.words[:]
+        lst.sort(key=lambda card: 1 - spatial.distance.cosine(model.wv[card.word].reshape(-1,1), word_vec.reshape(-1,1)))
+        yield from lst[:env.max_guesses]
         #words = model.similar_by_vector(word_vec, topn=env.max_guesses, restrict_vocab=None)
+        '''
         words = model.wv.most_similar(positive=[word_vec], topn=env.max_guesses)
         for x in words:
             yield Card(x, team="blue", chosen=False)
+        '''
 
 
 class SamyakSpyAgent(CodenamesAgent):
@@ -83,7 +86,7 @@ class SamyakSpyAgent(CodenamesAgent):
         
         #self.words = self.make_words_list()
         model = Word2Vec.load("huihan.model")
-        self.words = list(model.wv.vocab.keys())
+        self.words = list(model.wv.key_to_index.keys())
         
         self.team = team
 
