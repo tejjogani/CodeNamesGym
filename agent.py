@@ -23,9 +23,6 @@ class CodenamesAgent:
     def get_action():
         pass
 
-
-
-
 class RandomSpyAgent(CodenamesAgent):
     
     def __init__(self, team):
