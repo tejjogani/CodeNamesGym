@@ -71,7 +71,7 @@ class CodenameEnv(gym.Env):
     '''
     #self.dictionary = bagOfWords + weebWords
     model = Word2Vec.load("huihan.model")
-    self.dictionary = list(model.wv.key_to_index.keys())
+    self.dictionary = list(model.wv.index_to_key)
   
     self.team = random_team()
     self.words = list(map(lambda x: Card(self.dictionary[x]) ,gen_random_nums(16))) #temporary
