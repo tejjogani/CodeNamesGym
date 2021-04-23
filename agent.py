@@ -71,7 +71,7 @@ class WordEmbeddingsFieldAgent(CodenamesAgent):
         #model = Word2Vec(sentences, size=100, window=5, min_count=5, workers=4)
         clue_vec = self.model.wv[clue]
         lst = [spatial.distance.cosine(self.model.wv[x.word], clue_vec) for x in self.env.words]
-        lst = np.array(lst)
+        lst = np.array(lst) * -1
         most_similar_indices = lst.argsort()[-number:][::-1]
         print(most_similar_indices)
         return np.array(self.env.words)[most_similar_indices]
