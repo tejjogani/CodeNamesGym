@@ -129,7 +129,7 @@ class SamyakSpyAgent(CodenamesAgent):
         for i in range(1, len(self.red_words)+1):
             for rc in itertools.combinations(self.red_words, i):
                 for word in range(len(self.words)):
-                    if self.words[word] in self.red_words:
+                    if self.words[word] in [card.word for card in self.env.words]:
                         continue
                     else:
                         wd = float("inf")

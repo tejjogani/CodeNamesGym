@@ -72,9 +72,13 @@ class CodenameEnv(gym.Env):
     #self.dictionary = bagOfWords + weebWords
     model = Word2Vec.load("huihan.model")
     self.dictionary = list(model.wv.index_to_key)
-  
+    cn = open("game_wordpool.txt").readlines()
+    cn = [word.rstrip().lower() for word in cn]
+    self.words = random.sample(cn, 16)
+    self.words = [Card(word) for word in self.words]
     self.team = random_team()
-    self.words = list(map(lambda x: Card(self.dictionary[x]) ,gen_random_nums(16))) #temporary
+    #self.words = list(map(lambda x: Card(self.dictionary[x]) ,gen_random_nums(16))) #temporary
+    
     self.rbs = {'red': [], 'blue': []}
     self.fill_team('red') 
     self.fill_team('blue')
