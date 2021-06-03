@@ -121,12 +121,14 @@ class SamyakSpyAgent(CodenamesAgent):
         words = words.readlines()
         words = [word[:-1] for word in words]
         return words
+    def update_redwords(self):
+        self.red_words = [self.env.words[idx].word for idx in self.env.rbs[self.team] if not self.env.words[idx].chosen]
 
     def get_action(self):
         C_i = 0
         best = None
         d = float("inf")
-        for i in range(1, len(self.red_words)+1):
+        for i in range(1, len(self.red_words) + 1):
             for rc in itertools.combinations(self.red_words, i):
                 for word in range(len(self.words)):
                     if self.words[word] in [card.word for card in self.env.words]:
