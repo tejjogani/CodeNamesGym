@@ -73,7 +73,7 @@ class WordEmbeddingsFieldAgent(CodenamesAgent):
         lst = [spatial.distance.cosine(self.model.wv[x.word], clue_vec) for x in self.env.words]
         lst = np.array(lst) * -1
         most_similar_indices = lst.argsort()[-number:][::-1]
-        print(most_similar_indices)
+        # print(most_similar_indices)
         return np.array(self.env.words)[most_similar_indices]
         
         #words = model.similar_by_vector(word_vec, topn=env.max_guesses, restrict_vocab=None)
@@ -121,6 +121,7 @@ class SamyakSpyAgent(CodenamesAgent):
         words = words.readlines()
         words = [word[:-1] for word in words]
         return words
+
     def update_redwords(self):
         self.red_words = [self.env.words[idx].word for idx in self.env.rbs[self.team] if not self.env.words[idx].chosen]
 

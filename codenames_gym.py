@@ -41,13 +41,13 @@ class Card:
   
   def __str__(self):
     if self.chosen:
-      return str(self.team)
+      return str(f"[{self.team}]")
     else:
       return str(self.word)
 
   def __repr__(self):
     if self.chosen:
-      return str(self.team)
+      return str(f"[{self.team}]")
     else:
       return str(self.word)
 
@@ -94,38 +94,46 @@ class CodenameEnv(gym.Env):
     self.guessed_correct = False
     self.hint = ""
 
+    self.correct_reward = 1
+    self.wrong_reward = -1
+    self.death_reward = -1
+
+  def word2id(self, word):
+    return self.words.index(word)
   
   def step(self, action, team, spyagent=False):
     # Execute one time step within the environment
     done = False
     if not spyagent: #0 is listener
-      print(action)
       assert len(action) == 2 and len(action[0].word.split(' ')) == 1
-      if self.words.index(action[0]) in self.death:
+      if self.word2id(action[0]) in self.death:
+        reward = self.death_reward
         done = True
-        reward = -1 
-        self.words[self.words.index(action[0])].chosen = True
-        return self._get_obs(), reward, done, {}
-      if self.words.index(action[0]) in self.rbs[team]:
-        reward = 1 #recognize that sometimes reward is given for random choices (50/50)
+        info = {"type": "Death"}
+      elif self.word2id(action[0]) in self.rbs[team]:
+        reward = self.correct_reward
         if action[1] == self.max_guesses:
           done = True
-          self.guessed_correct =  True
+          self.guessed_correct = True
+          info = {"type": "Correct + reached max guesses"}
+        else:
+          info = {"type": "Correct"}
       else:
-        reward = -1
+        reward = self.wrong_reward
         done = True
         self.guessed_correct = False
-      self.words[self.words.index(action[0])].chosen = True
+        info = {"type": "Incorrect"}
+      self.words[self.word2id(action[0])].chosen = True
     else:
       assert len(action) == 3 or len(action) == 2
       #(keyword, number of words, [indices of words described])
       #self.correct_words = action[2]
       self.hint = action[0]
       self.max_guesses = action[1]
-      reward = 1 if self.guessed_correct else -1
-      
+      reward = self.correct_reward if self.guessed_correct else self.wrong_reward
+      info = {}
     
-    return self._get_obs(), reward, done, {}
+    return self._get_obs(), reward, done, info
 
   def reset(self):
     # Reset the state of the environment to an initial state

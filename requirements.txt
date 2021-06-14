@@ -26,3 +26,5 @@ scipy==1.5.4
 tornado==6.0.4
 traitlets==4.3.3
 wcwidth==0.1.9
+sklearn
+gensim
