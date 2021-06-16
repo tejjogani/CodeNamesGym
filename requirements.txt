@@ -28,3 +28,5 @@ traitlets==4.3.3
 wcwidth==0.1.9
 sklearn
 gensim
+torch
+transformers
